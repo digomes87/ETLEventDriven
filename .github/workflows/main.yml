@@ -2,7 +2,9 @@ name: main
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches-ignore: # Ignora PRs das branches principais
+      - 'main'
+      - 'master'
   pull_request:
 
 jobs:
@@ -14,3 +16,54 @@ jobs:
 
       - name: Run a simple test
         run: echo "Workflow está funcionando!"
+
+  create-pr:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+
+      - name: Check if PR already exists
+        id: check
+        run: |
+          PR_EXISTS=$(gh pr list --head ${{ github.ref_name }} --json number --jq 'length')
+          echo "exists=$PR_EXISTS" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Pull Request
+        if: steps.check.outputs.exists == '0'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Auto PR: ${{ github.event.head_commit.message }}"
+          title: "Auto PR: ${{ github.event.head_commit.message }}"
+          body: |
+            ## 🤖 Pull Request Automático
+            
+            Este PR foi criado automaticamente pelo GitHub Actions.
+            
+            ### Detalhes
+            - **Branch de origem:** `${{ github.ref_name }}`
+            - **Commit:** ${{ github.sha }}
+            - **Autor:** @${{ github.actor }}
+            - **Data:** $(date)
+            
+            ### Mensagem do commit
+            ```
+            ${{ github.event.head_commit.message }}
+            ```
+            
+            ### Testes
+            O workflow de teste foi executado com sucesso antes da criação deste PR.
+          branch: ${{ github.ref_name }}
+          base: main
+          labels: automated-pr
+          assignees: ${{ github.actor }}
+          reviewers:
+          draft: false
