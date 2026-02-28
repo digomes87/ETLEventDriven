@@ -1,0 +1,1 @@
+from .errors import register_error_middleware as register_error_middleware
