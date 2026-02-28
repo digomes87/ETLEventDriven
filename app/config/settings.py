@@ -4,6 +4,7 @@ import dotenv
 
 dotenv.load_dotenv(".env")
 
+
 class Settings:
     def __init__(self) -> None:
         # Application settings

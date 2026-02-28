@@ -44,17 +44,18 @@ class SqlAlchemyEventRepository(EventRepository):
         return raw_event
 
     async def mark_processed(
-            self,
-            raw_event: RawEvent,
-            status: str,
-            result_payload: dict[str, Any] | None =  None,
+        self,
+        raw_event: RawEvent,
+        status: str,
+        result_payload: dict[str, Any] | None = None,
     ) -> ProcessedRecord:
         record = ProcessedRecord(
             raw_event_id=raw_event.id,
             status=status,
-            result_payload=json.dumps(result_payload) if result_payload is not None else None,
+            result_payload=json.dumps(result_payload)
+            if result_payload is not None
+            else None,
         )
         self.session.add(record)
         await self.session.flush()
         return record
-

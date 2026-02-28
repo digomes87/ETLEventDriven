@@ -20,4 +20,3 @@ class CsvFileIngestionConnector(IngestionConnector):
                 if cleaned:
                     rows.append(cleaned)
         return rows
-

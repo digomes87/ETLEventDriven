@@ -26,9 +26,7 @@ async def run_load_test(
     requests_per_client: int = 10,
 ) -> None:
     async with httpx.AsyncClient(base_url=base_url, timeout=10.0) as client:
-        tasks = [
-            worker(client, requests_per_client) for _ in range(concurrent_clients)
-        ]
+        tasks = [worker(client, requests_per_client) for _ in range(concurrent_clients)]
         all_latencies_lists = await asyncio.gather(*tasks)
 
     latencies = [item for sublist in all_latencies_lists for item in sublist]
@@ -48,4 +46,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

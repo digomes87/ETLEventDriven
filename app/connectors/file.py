@@ -22,4 +22,3 @@ class JsonFileIngestionConnector(IngestionConnector):
         if isinstance(data, dict):
             return [data]
         return []
-

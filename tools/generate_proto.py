@@ -1,6 +1,5 @@
-import subprocess
-import sys
 import re
+import subprocess
 from pathlib import Path
 
 
@@ -33,10 +32,10 @@ def generate_protos():
         # From: import etlpay_pb2 as etlpay__pb2
         # To:   from . import etlpay_pb2 as etlpay__pb2
         content = re.sub(
-            r'^import etlpay_pb2 as etlpay__pb2',
-            'from . import etlpay_pb2 as etlpay__pb2',
+            r"^import etlpay_pb2 as etlpay__pb2",
+            "from . import etlpay_pb2 as etlpay__pb2",
             content,
-            flags=re.MULTILINE
+            flags=re.MULTILINE,
         )
 
         # Remove broken version check block (grpcio 1.68.0+ issue)
@@ -45,17 +44,18 @@ def generate_protos():
 
         # Pattern to match the try/except block for first_version_is_lower
         version_check_pattern = re.compile(
-            r'try:\s+from grpc._utilities import first_version_is_lower.*?except ImportError:.*?_version_not_supported = True',
-            re.DOTALL
+            r"try:\s+from grpc._utilities import first_version_is_lower.*?except ImportError:.*?_version_not_supported = True",
+            re.DOTALL,
         )
-        content = version_check_pattern.sub('# Version check removed by tools/generate_proto.py', content)
+        content = version_check_pattern.sub(
+            "# Version check removed by tools/generate_proto.py", content
+        )
 
         # Pattern to match the runtime error check
         runtime_error_pattern = re.compile(
-            r'if _version_not_supported:.*?raise RuntimeError\(.*?\)',
-            re.DOTALL
+            r"if _version_not_supported:.*?raise RuntimeError\(.*?\)", re.DOTALL
         )
-        content = runtime_error_pattern.sub('# RuntimeError check removed', content)
+        content = runtime_error_pattern.sub("# RuntimeError check removed", content)
 
         grpc_file.write_text(content)
         print(f"Fixed imports and version check in {grpc_file}")
