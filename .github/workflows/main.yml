@@ -46,7 +46,7 @@ jobs:
           pytest
 
   create-pr:
-    needs: test
+    needs: test # Only runs if the 'test' job passes successfully
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
     
@@ -54,8 +54,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create Pull Request from develop to main
+      - name: Create and Enable Auto-Merge for Pull Request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr create --base main --head develop --title "Merge develop into main" --body "Automated PR created after successful tests on develop branch." || echo "PR creation failed or already exists"
+          gh pr create --base main --head develop --title "Merge develop into main" --body "Automated PR created after successful tests on develop branch." || echo "PR already exists"
+          gh pr merge develop --auto --merge || echo "Auto-merge could not be enabled (check repo settings)"
