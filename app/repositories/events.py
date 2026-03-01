@@ -41,6 +41,7 @@ class SqlAlchemyEventRepository(EventRepository):
             payload=json.dumps(payload),
         )
         self.session.add(raw_event)
+        await self.session.flush()
         return raw_event
 
     async def mark_processed(

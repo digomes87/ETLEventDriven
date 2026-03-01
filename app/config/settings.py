@@ -11,12 +11,8 @@ class Settings:
         self.app_name: str = os.getenv("APP_NAME", "ETLEventDriven")
         self.app_env: str = os.getenv("APP_ENV", "development")
         self.app_debug: bool = os.getenv("APP_DEBUG", "true").lower() == "true"
-
-        # API settings
         self.api_host: str = os.getenv("API_HOST", "0.0.0.0")
         self.api_port: int = int(os.getenv("API_PORT", "8000"))
-
-        # Postgres settings
         self.postgres_host: str = os.getenv("POSTGRES_HOST", "localhost")
         self.postgres_port: int = int(os.getenv("POSTGRES_PORT", "5432"))
         self.postgres_db: str = os.getenv("POSTGRES_DB", "")
