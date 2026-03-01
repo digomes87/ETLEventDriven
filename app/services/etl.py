@@ -28,7 +28,7 @@ async def ingest_and_mark_success(
     record = await mark_processed(
         repository=repository,
         raw_event=raw_event,
-        status="success",
+        status="SUCCESS",
         result_payload=payload,
     )
     return raw_event, record
