@@ -1,7 +1,6 @@
 from datetime import datetime
 import json
 
-
 from pydantic import BaseModel, ConfigDict, field_validator
 
 
@@ -35,13 +34,13 @@ class RawEventCreate(BaseModel):
     @classmethod
     def validate_payload(cls, value: dict) -> dict:
         if not isinstance(value, dict):
-            raise ValueError("payload must be a dict")
+            raise ValueError("payload must be an object")
         if not value:
             raise ValueError("payload must not be empty")
         return value
 
 
-class ProcessedRecordCreate(BaseModel):
+class ProcessedRecordRead(BaseModel):
     id: int
     raw_event_id: int
     status: str
