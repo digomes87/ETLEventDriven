@@ -9,6 +9,7 @@ on:
     branches:
       - develop
       - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -48,7 +49,7 @@ jobs:
   create-pr:
     needs: test # Only runs if the 'test' job passes successfully
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    if: (github.ref == 'refs/heads/develop' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
     
     steps:
       - name: Checkout code
