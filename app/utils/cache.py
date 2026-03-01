@@ -17,7 +17,7 @@ class RedisCacheClient(CacheClient):
             decode_responses=True,
         )
 
-    async def gget(self, key: str) -> str | None:
+    async def get(self, key: str) -> str | None:
         try:
             return await self._client.get(key)
         except redis.ConnectionError:
